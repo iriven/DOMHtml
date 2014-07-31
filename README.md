@@ -1,8 +1,7 @@
 DOMHtml
 =======
 
-classe php de manipulation dynamique des fichiers html
-exploitant uniquement la puissance de DOMDocument et DOMXpath.
+classe PHP permettant de manipuler de façon dynamique des fichiers html ,en exploitant uniquement la puissance des bibliothèques DOMDocument et DOMXpath.
 (pas de regex).
 ce projet est encore en cours de developpement mais les methodes deja disponibles sont
 totalement fonctionnelles et nous n'avons pas à ce jour decelé de bug.
