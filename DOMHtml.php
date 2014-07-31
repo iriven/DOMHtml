@@ -10,7 +10,7 @@
 * @Since 		Version 1.0.0
 * @link 		https://github.com/iriven/DOMHtml The DOMHtml GitHub project
 * @author 		Alfred Tchondjo (original founder) <iriven@yahoo.fr>
-* @license  		GPL V3 License(http://www.opensource.org/licenses/mit-license.php)
+* @license  		GPL V3 License(http://www.gnu.org/copyleft/gpl.html)
 *
 * ==================  NOTICE  =======================
 * This program is free software; you can redistribute it and/or
