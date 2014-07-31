@@ -41,12 +41,12 @@ class DOMHtml extends DOMDocument
 		if($this->encoding !== $Charset)
 		$datas = mb_convert_encoding($datas, $Charset, $this->encoding);				
 		if(!$this->loadHTML($datas,LIBXML_COMPACT)) return false;
+		$this->normalizeDocument();
 		$this->xpath = new DomXpath($this);
 		$this->xpath->registerNamespace('html', 'http://www.w3.org/1999/xhtml');
 		$this->xpath->registerNamespace('php', 'http://php.net/xpath');
 		$this->xpath->registerPHPFunctions();
-		$datas = $this->normalizeDocument();
-		return $this->saveHTML($datas);
+		return $this->saveHTML();
 	
 	}
 	/**
