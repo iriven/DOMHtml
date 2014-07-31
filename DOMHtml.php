@@ -194,7 +194,6 @@ class DOMHtml extends DOMDocument
 		if($options and !is_array($options)){ $tagName = $options; $options=array();}
 		 if(!$tagName) $tagName =(isset($options['parent']) and $options['parent'])? $options['parent']:
 		  			((isset($options['target']) and $options['target'])? $options['target']:null);
-
 		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): null;		
 		$tagAttributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
 		if($k !=='offset' and $k !=='parent' and $k !=='target') $out[$k]=$v;return $out;},$options) : array();		
@@ -347,21 +346,46 @@ class DOMHtml extends DOMDocument
 	 * @param  array   $options
 	 * @return mixed
 	 */
-	public function innerHTML($tagName,$havingAttribute=array(), $offset='0')
-	{	if(!$tagName) return $this->saveHTML();
-		if(!$this->tagExists($tagName)) return false;  
+	public function innerHTML($tagName,$options=array())
+	{	
+		$numargs = func_num_args();
+   		$args = func_get_args();
+   		if($numargs = 1)
+		{
+			if(is_array($args[0]))
+			{ 
+				$options = $args[0];
+				$tagName =(isset($options['parent']) and $options['parent'])? $options['parent']:
+		  			((isset($options['target']) and $options['target'])? $options['target']:null);
+			}
+			else{ $tagName = $args[0]; $options = array();}	
+		}
+		if(!$tagName) return $this->saveHTML();
+		if($options and !is_array($options)){$options=array($options);}
+		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): '0';		
+		$tagAttributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
+		if($k !=='offset' and $k !=='parent' and $k !=='target') $out[$k]=$v;return $out;},$options) : array();		
 		$params = array();
-		if($havingAttribute) $params = $this->xpathQueryBlocks($havingAttribute);
+		if($tagAttributes) $params = $this->xpathQueryBlocks($tagAttributes);
 		$query='//'.$tagName;
 		if($params) $query.='['.implode(' and ',$params).']';
 		$query.='/*';
-		$nodes = $this->xpath->query($query)->item($offset);
-		if (!$nodes instanceof DomElement)return false;
-		if ($nodes->length = 1) return $this->saveHTML( $nodes );
-		$countent='';
+		$nodes = $offset? $this->xpath->query($query)->item($offset) : $this->xpath->query($query);
+		switch($nodes):
+		case ($nodes instanceof DOMNodelist):
+		$countent=array();
 		foreach($nodes as $node)
-		$countent .= $this->saveHTML( $node );
-		return $countent;
+		$countent[]= $this->saveHTML($node);
+		return $countent;			
+		break;
+		case ($nodes instanceof DomElement):
+		return $this->saveHTML( $nodes );
+		/**/	
+		break;		
+		default:
+		return false;
+		break;
+		endswitch;
 	}	
 	/**
 	 * retrieve the whole document to check if a given tag exists.
