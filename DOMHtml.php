@@ -381,7 +381,7 @@ class DOMHtml extends DOMDocument
 	{	
 		$numargs = func_num_args();
    		$args = func_get_args();
-   		if($numargs = 1)
+   		if($numargs == 1)
 		{
 			if(is_array($args[0]))
 			{ 
