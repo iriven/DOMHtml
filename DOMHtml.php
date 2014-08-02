@@ -1,3 +1,4 @@
+<?php
 /**
 * DOMHtml - PHP class to manipulate html files, using only the power of DOMDocument and DOMXpath.
 * Copyright (C) 2014 Iriven France Software, Inc. 
