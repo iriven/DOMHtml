@@ -138,6 +138,115 @@ class DOMHtml extends DOMDocument
 		endswitch;
 	}
 	/**
+	 * set a single or multiple attributes value of a given tag.
+	 *
+	 * @param  mixed  $attribute
+	 * @param  string   $value
+	 * @param  array   $options
+	 * @return string
+	 */		
+	public function setAttributes($attribute, $value='',$options=array())
+	{ $numargs = func_num_args();
+	  $args = func_get_args();
+	  $tagName = null;
+	  switch($numargs):
+	  case '2':
+	  $attribute = $args[0];
+	  if(!is_array($attribute))
+	  {
+		  if(is_array($args[1]))return false;
+		  $value = $args[1]; $options=array(); 
+	  }
+	  else
+	  {
+		  if(is_array($args[1])) $options=$args[1];
+		  else{ $tagName = $args[1]; $options=array();}  
+	  }
+	  break;
+	  case '1':
+	  $options=$args[0];
+	  if(!$options['attribute']) return false;
+	  $attribute = $options['attribute'];
+	  unset($options['attribute']);
+	  $value = isset($options['value'])? $options['value'] : null;
+	  if($value) 
+	  {
+		  unset($options['value']);
+		  if(is_array($value)) $value = join(' ',$value);
+	  }
+	  if(!is_array($attribute))
+	  {
+		   if(!$value) return false;
+		   $attribute = array($attribute=>$value);  
+	  }
+	  else
+	  { $aTemp = array();
+		  foreach($attribute as $key=>$val)
+		  {
+			  if(is_numeric($key) and empty($val)) continue;
+			  if(!is_numeric($key)  and !empty($val)) $value = $val .' '.$value;
+			  if(is_numeric($key) and !empty($val)) $key = $val;
+			  $aTemp[$key] = $value;
+		  }
+		  $attribute = $aTemp;
+	  }
+	  break;	  
+	  default:
+	   if(is_array($value)) $value = join(' ',$value);
+	  $attribute = array($attribute=>$value);
+	  break;
+	  endswitch;
+	  if(!$attribute) return false;
+	  if(!is_array($options)) $options = array($options);	  
+	  if(!$tagName) $tagName =(isset($options['parent']) and $options['parent'])? $options['parent']:
+		  			((isset($options['target']) and $options['target'])? $options['target']:'*');
+
+		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): null;
+		
+		$attributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
+		if($k !== 'target' and $k !=='parent' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();	
+		$params = array();
+		$params = $this->xpathQueryBlocks($attributes);
+		$query='//'.$tagName;
+		if($params) $query.='['.implode(' and ',$params).']';
+		$nodes = !is_null($offset)? $this->xpath->query($query)->item($offset):$this->xpath->query($query);	
+		switch($nodes):
+			case ($nodes instanceof DomNodeList):	
+				foreach ($nodes as $node)
+				{	
+					foreach($attribute as $key=>$value)
+					{
+						if(is_numeric($key)) continue;
+						if($node->hasAttribute($key))
+						{
+							if($oldValue = $node->getAttribute($key))
+							$value = $oldValue .' '.$value;
+						}
+						$node->removeAttribute($key);
+						$node->setAttribute($key, $value);
+					}
+				}
+			break;
+			case ($nodes instanceof DomElement):
+					foreach($attribute as $key=>$value)
+					{
+						if(is_numeric($key)) continue;
+						if($nodes->hasAttribute($key))
+						{
+							if($oldValue = $nodes->getAttribute($key))
+							$value = $oldValue .' '.$value;
+						}
+						$nodes->removeAttribute($key);
+						$nodes->setAttribute($key, $value);
+					}
+			break;			
+			default:
+				return false;
+			break;
+		endswitch;									
+	return $this->saveHTML();
+	}		
+	/**
 	 * Returns an associative array of all atributes of a given tag.
 	 *
 	 * @param  string  $tagName
