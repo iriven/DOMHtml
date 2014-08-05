@@ -139,7 +139,7 @@ class DOMHtml extends DOMDocument
 		endswitch;
 	}
   /**
-   * del a single or multiple attributes value of a given tag.
+   * delete a single or multiple attributes of a given tag.
    *
    * @param  mixed  $attribute
    * @param  string   $value
