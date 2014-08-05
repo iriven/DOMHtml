@@ -29,10 +29,10 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 * or contact the author by mail at: <iriven@yahoo.fr>.
 **/
-
 class DOMHtml extends DOMDocument
 {
 	private $xpath;
+	private $htmlAttributes = array('accept','accept-charset','accesskey','action','align','alt','async','autocomplete','autofocus','autoplay','bgcolor','border','buffered','challenge','charset','checked','cite','class','code','codebase','color','cols','colspan','content','contenteditable','contextmenu','controls','coords','data','data-*','datetime','default','defer','dir','dirname','disabled','download','draggable','dropzone','enctype','for','form','headers','height','hidden','high','href','hreflang','http-equiv','icon','id','ismap','itemprop','keytype','kind','label','lang','language','list','loop','low','manifest','max','maxlength','media','method','min','multiple','name','novalidate','open','optimum','pattern','ping','placeholder','poster','preload','pubdate','radiogroup','readonly','rel','required','reversed','rows','rowspan','sandbox','spellcheck','scope','scoped','seamless','selected','shape','size','sizes','span','src','srcdoc','srclang','start','step','style','summary','tabindex','target','title','type','usemap','value','width','wrap');
 	/**
 	 * Class constructor.
 	 *
@@ -92,16 +92,16 @@ class DOMHtml extends DOMDocument
 	public function getAttributeValue($needle,$tagName,$options=array())
 	{
 		if(!$needle)return false;
-		if(!$tagName) $tagName='*';
 		if(is_array($tagName))
 		{
 			$options=$tagName;
-			$tagName=(isset($options['target']) and $options['target'])? $options['target']:'*';
+			if(isset($options['tag']) and $options['tag']) $tagName=$options['tag'];
 		}
+		if(!$tagName) $tagName='*';
 		if(!is_array($options)) $options = array($options);
 		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): null;
 		$attributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
-		if($k !== 'target' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();
+		if($k !== 'tag' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();
 		$attributes[]=$needle;
 		$params = array();
 		$params = $this->xpathQueryBlocks($attributes);
@@ -138,15 +138,62 @@ class DOMHtml extends DOMDocument
 			break;
 		endswitch;
 	}
-	/**
-	 * set a single or multiple attributes value of a given tag.
-	 *
-	 * @param  mixed  $attribute
-	 * @param  string   $value
-	 * @param  array   $options
-	 * @return string
-	 */		
-	public function setAttributes($attribute, $value='',$options=array())
+  /**
+   * del a single or multiple attributes value of a given tag.
+   *
+   * @param  mixed  $attribute
+   * @param  string   $value
+   * @param  array   $options
+   * @return string
+   */	
+   public function delAttributes($needle,$tagName, $options=array())
+  {
+	  if(!$needle)return false;
+	  if(is_array($tagName) and (func_num_args()==2))
+	  {
+		  $options=$tagName;
+		  $tagName=(isset($options['tag']) and $options['tag'])?$options['tag'] : null;
+	  }
+	  if(!$tagName) $tagName='*';
+	  if(!is_array($options)) $options = array($options);
+	  if(is_array($needle)){ $needle = array_values($needle); foreach($needle as $item) $this->delAttributes($item,$tagName,$options);}
+	  $offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): null;
+	  $attributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
+	  if($k !== 'tag' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();
+	  $attributes[]=$needle;
+	  $params = array();
+	  $params = $this->xpathQueryBlocks($attributes);
+	  if(!is_array($tagName)) $tagName = array($tagName);
+	  foreach($tagName as $tag)
+	  {
+		$query='//'.$tag;
+		if($params) $query.='['.implode(' and ',$params).']';
+		$nodes = !is_null($offset)? $this->xpath->query($query)->item($offset):$this->xpath->query($query);
+		  switch($nodes):
+			  case ($nodes instanceof DomNodeList):
+			  $output=array();
+			  foreach ($nodes as $node)
+			  $node->removeAttribute($needle);
+			  break;
+			  case ($nodes instanceof DomElement):
+			  $nodes->removeAttribute($needle);
+			  break;			
+			  default:
+				  return false;
+			  break;
+		  endswitch;		    
+	  }	  	  	  	  
+	return $this->saveHTML();	  
+  }	
+  /**
+   * set a single or multiple attributes value of a given tag.
+   *
+   * @param  mixed  $attribute
+   * @param  string   $value
+   * @param  array   $options
+   * @return string
+   */		
+	public function addAttributes($attribute, $value='',$options=array())
 	{ $numargs = func_num_args();
 	  $args = func_get_args();
 	  $tagName = null;
@@ -200,12 +247,12 @@ class DOMHtml extends DOMDocument
 	  if(!$attribute) return false;
 	  if(!is_array($options)) $options = array($options);	  
 	  if(!$tagName) $tagName =(isset($options['parent']) and $options['parent'])? $options['parent']:
-		  			((isset($options['target']) and $options['target'])? $options['target']:'*');
+		  			((isset($options['tag']) and $options['tag'])? $options['tag']:'*');
 
 		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): null;
 		
 		$attributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
-		if($k !== 'target' and $k !=='parent' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();	
+		if($k !== 'tag' and $k !=='parent' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();	
 		$params = array();
 		$params = $this->xpathQueryBlocks($attributes);
 		$query='//'.$tagName;
@@ -246,7 +293,7 @@ class DOMHtml extends DOMDocument
 			break;
 		endswitch;									
 	return $this->saveHTML();
-	}		
+	}	
 	/**
 	 * Returns an associative array of all atributes of a given tag.
 	 *
@@ -260,7 +307,7 @@ class DOMHtml extends DOMDocument
 		if(!is_array($options)) $options = array($options);
 		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): array();
 		$attribute = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
-		if($k !== 'target' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();
+		if($k !== 'tag' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();
 		$params = array();
 		$params = $this->xpathQueryBlocks($attribute);
 		$query='//'.$tagName;
@@ -300,19 +347,19 @@ class DOMHtml extends DOMDocument
 	 * @param  array   $options
 	 * @return bool
 	 */
-	public function attrExists($needle, $tagName,$options=array())
+	public function attributeExists($needle, $tagName,$options=array())
 	{
 		if(!$needle) return false;
 		if(!$tagName) $tagName='*';
 		if(is_array($tagName))
 		{
 			$options=$tagName;
-			$tagName=(isset($options['target']) and $options['target'])? $options['target']:'*';
+			$tagName=(isset($options['tag']) and $options['tag'])? $options['tag']:'*';
 		}
 		if(!is_array($options)) $options = array($options);
 		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): '0';	
 		$attribute = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
-		if($k !== 'target' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();
+		if($k !== 'tag' and $k !=='offset') $out[$k]=$v;return $out;},$options) : array();
 		$attribute[]=$needle;
 		$params = array();
 		$params = $this->xpathQueryBlocks($attribute);
@@ -334,10 +381,10 @@ class DOMHtml extends DOMDocument
 		if(!$content or is_array($content)) return false;
 		if($options and !is_array($options)){ $tagName = $options; $options=array();}
 		 if(!$tagName) $tagName =(isset($options['parent']) and $options['parent'])? $options['parent']:
-		  			((isset($options['target']) and $options['target'])? $options['target']:null);
+		  			((isset($options['tag']) and $options['tag'])? $options['tag']:null);
 		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): null;		
 		$tagAttributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
-		if($k !=='offset' and $k !=='parent' and $k !=='target') $out[$k]=$v;return $out;},$options) : array();		
+		if($k !=='offset' and $k !=='parent' and $k !=='tag') $out[$k]=$v;return $out;},$options) : array();		
 		if(!$tagName)
 		{
 			$root = $this->lastChild;
@@ -497,7 +544,7 @@ class DOMHtml extends DOMDocument
 			{ 
 				$options = $args[0];
 				$tagName =(isset($options['parent']) and $options['parent'])? $options['parent']:
-		  			((isset($options['target']) and $options['target'])? $options['target']:null);
+		  			((isset($options['tag']) and $options['tag'])? $options['tag']:null);
 			}
 			else{ $tagName = $args[0]; $options = array();}	
 		}
@@ -505,7 +552,7 @@ class DOMHtml extends DOMDocument
 		if($options and !is_array($options)){$options=array($options);}
 		$offset=(isset($options['offset'])and is_numeric($options['offset']))?intval($options['offset']): '0';		
 		$tagAttributes = ($options) ? call_user_func(function($tab){if(!is_array($tab)) return null;$out=array();foreach($tab as $k=>$v)
-		if($k !=='offset' and $k !=='parent' and $k !=='target') $out[$k]=$v;return $out;},$options) : array();		
+		if($k !=='offset' and $k !=='parent' and $k !=='tag') $out[$k]=$v;return $out;},$options) : array();		
 		$params = array();
 		if($tagAttributes) $params = $this->xpathQueryBlocks($tagAttributes);
 		$query='//'.$tagName;
