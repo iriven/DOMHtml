@@ -17,12 +17,12 @@
 	$doc->appendHTML($content='ceci est mon super long contenu html',array('offset'=>'0','parent'=>'div','class'=>' main'));
 	
 	//test si au moins une balise de notre document possède un attribut "class"
-	echo $doc->attrExists('class',$options=array());
+	echo $doc->elementHasAttribute('class',$options=array());
 	//comme précédemment vous pouvez filtre la (ou les ) balises concernée(s) grace aux options
 	
 	//replacer toutes les occurences d'une balise du document par une autre, tout en conservant leurs attribut et leur contenu
 	// remplacer les "<p>" par des <div>
-	echo $doc->renameTag($tagName='p',$newname='div',$options=array());
+	echo $doc->renameElement($tagName='p',$newname='div',$options=array());
 	
 	//afficher le document
 	//echo $doc->saveHTML();
