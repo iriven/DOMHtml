@@ -23,4 +23,23 @@ Revisions
 -----------------------------------------------------------------------------	
 
 Les Methodes publiques
--	public function appendCdata($content, $nodeName, $options=[]) 
+
+-	public function appendCdata($content, $nodeName, $options=[])
+-	public function appendHTML($content, $options=array())
+-	public function elementHasAttribute($attrName, $tagName,$options=array())
+-	public function getAttributeValue($attrName,$TagName,$options=array())
+-	public function getElementAttributes($tagName,$options=array())
+-	public function getElementsByName($tagName,$options=[])
+-	public function getInnerHTML($tagName,$options=array())
+-	public function hasElement($tagName,$options=[])
+-	public function removeElement($tagName,$options=[])
+-	public function removeAttribute($attrName,$TagName, $options=[])
+-	public function removeCdata($nodeName, $options = [])
+-	public function renameElement($oldName,$newName,$options=array())
+-	public function replaceElement($oldTagName,$newDatas=['tagname' =>null,'content' =>''],$options=[])
+-	public function setAttributes($attrName, $value='',$options=array())
+-	public function stripComments()
+-	public function stripScripts()
+-	public function updateInnerHTML($newContent='',$tagName,$options=[])
+
+NB : Cette class hérite egalement de toutes les methodes natives de DOMDocument.
