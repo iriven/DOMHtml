@@ -22,5 +22,5 @@ Revisions
 
 -----------------------------------------------------------------------------	
 
-#Les Methodes publiques
+Les Methodes publiques
 -	public function appendCdata($content, $nodeName, $options=[]) 
