@@ -1,5 +1,5 @@
 <?php
-	$doc= new DOMHtml();
+	$doc= new \Iriven\DOMHtml();
 	/* cas d'un fichier distant  ou non */
 	$doc->loadXHTML($html='http://www.conforama.fr/service/catalogues');
 	
@@ -25,9 +25,10 @@
 	echo $doc->renameElement($tagName='p',$newname='div',$options=array());
 	
 	//afficher le document
-	//echo $doc->saveHTML();
+	echo $doc->saveHTML();
+
 /*cas d'une chaine de caractere*/
-	$doc= new DOMHtml();
+	$doc= new \Iriven\DOMHtml();
 	$doc->loadXHTML($html); //avec $html fourni ci dessous
 //le procedé reste le même. vous pouvez reprendre les exemples precedents avec la chaine ci-dessous;
 
