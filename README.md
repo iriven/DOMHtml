@@ -1,4 +1,4 @@
-# IRIVEN FRANCE: DOMHtml
+# IRIVEN PHP: DOMHtml
 
 classe PHP permettant de manipuler de façon dynamique des fichiers html ,en exploitant uniquement la puissance des bibliothèques DOMDocument et DOMXpath.
 (pas de regex).
