@@ -9,7 +9,7 @@ namespace Iriven;
 *
 * @Copyright 		Copyright (C) 2014 Iriven France Software, Inc.
 * @package 		DOMHtml
-* @Since 		Version 1.0.0
+* @Since 		Version 1.0.1
 * @link 		https://github.com/iriven/DOMHtml The DOMHtml GitHub project
 * @author 		Alfred Tchondjo (original founder) <iriven@yahoo.fr>
 * @license  		GPL V3 License(http://www.gnu.org/copyleft/gpl.html)
