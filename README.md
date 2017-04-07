@@ -1,6 +1,6 @@
 # IRIVEN PHP: DOMHtml
-======================
-A PHP DOM Html Parser
+========
+>A PHP DOM Html Parser
 ------------------------------------------------------------------------------
 
 classe PHP permettant de manipuler de façon dynamique des fichiers html ,en exploitant uniquement la puissance des bibliothèques DOMDocument et DOMXpath.
