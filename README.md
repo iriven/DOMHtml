@@ -42,4 +42,4 @@ Les Methodes publiques
 -	public function stripScripts()
 -	public function updateInnerHTML($newContent='',$tagName,$options=[])
 
-NB : Cette classe hérite egalement de toutes les methodes natives de DOMDocument.
+NB : Cette classe hérite egalement de toutes les proprietes et methodes natives de DOMDocument.
