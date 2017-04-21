@@ -1,5 +1,4 @@
 # IRIVEN PHP: DOMHtml
-
 >The ultimate Html DOM Parser class for PHP 
 ------------------------------------------------------------------------------
 
