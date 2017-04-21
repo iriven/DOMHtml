@@ -1,7 +1,5 @@
 # IRIVEN PHP: DOMHtml
 
-[![Build Status][travis-image]][travis-url]
-
 >The ultimate Html DOM Parser class for PHP 
 ------------------------------------------------------------------------------
 
