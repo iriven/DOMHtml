@@ -1,7 +1,7 @@
 # IRIVEN PHP: DOMHtml
 >The ultimate Html DOM Parser class for PHP 
 ------------------------------------------------------------------------------
-
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XDCFPNTKUC4TU)
 classe PHP permettant de manipuler de façon dynamique des fichiers html ,en exploitant uniquement la puissance des bibliothèques DOMDocument et DOMXpath.
 (pas de regex).
 
